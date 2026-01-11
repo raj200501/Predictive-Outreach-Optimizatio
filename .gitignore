@@ -1,0 +1,8 @@
+models/
+__pycache__/
+*.pyc
+data/preprocessed_*.csv
+data/features.csv
+data/engagement_scores.csv
+data/outreach_plan.csv
+data/predictions.csv

@@ -14,6 +14,11 @@ To get started, clone the repository and install the necessary packages:
 git clone https://github.com/yourusername/Predictive-Outreach-Optimization.git
 cd Predictive-Outreach-Optimization
 ```
+
+### Prerequisites
+* Python 3.10+
+
+All scripts use only the Python standard library, so there are no external dependency installs required.
 ## Usage
 ### Running Scripts
 We have provided several scripts to help you preprocess data, train models, and generate outreach plans.
@@ -23,7 +28,7 @@ To preprocess the data, run the following script:
 ```bash
 bash scripts/preprocess_data.sh
 ```
-This script will execute the data_preprocessing.R script, which cleans and transforms the raw data into a format suitable for further analysis.
+This script will execute the data preprocessing pipeline, which cleans and transforms the raw data into a format suitable for further analysis.
 
 ### Train Model
 To train the predictive model, run the following script:
@@ -31,7 +36,7 @@ To train the predictive model, run the following script:
 ```bash
 bash scripts/train_model.sh
 ```
-This script will first execute the feature_engineering.R script to create features from the preprocessed data, and then run the model_training.R script to train the model using these features.
+This script will first execute the feature engineering step to create features from the preprocessed data, and then train the model using these features.
 
 ### Generate Outreach Plan
 To generate personalized outreach plans, run the following script:
@@ -39,7 +44,24 @@ To generate personalized outreach plans, run the following script:
 ```bash
 bash scripts/generate_outreach_plan.sh
 ```
-This script will execute the engagement_scoring.R and personalized_outreach_plan.R scripts to score customer engagement and generate tailored outreach plans.
+This script will execute the engagement scoring and personalized outreach plan steps to score customer engagement and generate tailored outreach plans.
+
+### Run the Full Pipeline (Recommended)
+If you want to run the end-to-end pipeline with sane defaults, use:
+
+```bash
+bash scripts/run.sh
+```
+
+It will:
+1. Preprocess the raw data
+2. Build features and train the model
+3. Score engagement and generate a personalized outreach plan
+
+The resulting outreach plan is written to:
+```
+data/outreach_plan.csv
+```
 
 ## Project Structure
 The repository is organized as follows:
@@ -49,7 +71,9 @@ customer_demographics.csv
 purchase_history.csv
 social_media_interactions.csv
 behavioral_data.csv
-src/: Contains R scripts for various stages of the predictive analytics pipeline.
+new_data.csv
+test_data.csv
+src/: Contains legacy R scripts for reference.
 data_preprocessing.R
 feature_engineering.R
 model_training.R
@@ -57,21 +81,30 @@ outreach_prediction.R
 engagement_scoring.R
 personalized_outreach_plan.R
 evaluation.R
+utils.R
+src_py/: Contains Python implementations for the predictive analytics pipeline.
+data_preprocessing.py
+feature_engineering.py
+model_training.py
+outreach_prediction.py
+engagement_scoring.py
+personalized_outreach_plan.py
+evaluation.py
+utils.py
 scripts/: Contains shell scripts for automating various tasks.
 preprocess_data.sh
 train_model.sh
 generate_outreach_plan.sh
+run.sh
+verify.sh
 reports/: Contains markdown files documenting various aspects of the project.
 data_analysis_report.md
 model_performance_report.md
 outreach_strategy_report.md
-tests/: Contains R scripts for unit testing different components of the project.
-test_data_preprocessing.R
-test_feature_engineering.R
-test_model_training.R
-test_outreach_prediction.R
-test_engagement_scoring.R
-test_personalized_outreach_plan.R
+tests/: Contains Python unit tests for different components of the project.
+test_pipeline.py
+test_utils.py
+test_smoke_pipeline.py
 ```
 LICENSE: The license under which the project is distributed.
 ## Detailed Reports
@@ -83,3 +116,40 @@ The Model Performance Report evaluates the predictive models used in this projec
 
 ### Outreach Strategy Report
 The Outreach Strategy Report offers recommendations for optimizing product outreach strategies based on the insights generated from the predictive models. It includes customer segmentation, personalized outreach plans, and optimal communication channels to maximize engagement and conversion rates.
+
+## Verified Quickstart
+These are the exact commands used to run the project end-to-end:
+
+```bash
+bash scripts/run.sh
+```
+
+Expected output artifact:
+```
+data/outreach_plan.csv
+```
+
+Additional generated artifacts:
+```
+models/outreach_model.json
+data/engagement_scores.csv
+data/predictions.csv
+```
+
+## Verified Verification
+Run the deterministic verification script:
+
+```bash
+bash scripts/verify.sh
+```
+
+This script performs:
+* Environment validation
+* Full pipeline execution (preprocess → feature engineering → model training → scoring → outreach plan)
+* Prediction and evaluation checks
+* Unit + smoke tests via `unittest`
+
+## Troubleshooting
+* **Missing Python installation**: install Python 3.10+ and re-run `bash scripts/bootstrap.sh` to validate the environment.
+* **Permission errors creating `models/` or `data/` outputs**: ensure you have write access to the repository directory.
+* **Large output files**: generated artifacts (models, intermediate CSVs) are excluded from version control via `.gitignore`.
